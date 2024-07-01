@@ -1,6 +1,6 @@
-# UM CHATBOT
+# UMBOT - Elite AI Chatbot
 
-Elite AI Chatbot is a web application that leverages the power of Gemini and Groq AI models to provide an advanced conversational experience. Built on the Python Flask framework, this application offers a user-friendly interface for interacting with various AI models.
+UMBOT is an advanced AI chatbot application that utilizes Gemini and Groq AI models to provide a sophisticated conversational experience. Built with Python Flask, this web application offers a user-friendly interface for interacting with various AI models.
 
 ## Features
 
@@ -13,13 +13,13 @@ Elite AI Chatbot is a web application that leverages the power of Gemini and Gro
 
 ## Installation
 
-Follow these steps to run the project on your local machine:
+Follow these steps to run UMBOT on your local machine:
 
 1. Clone the repository:
 
 ```bash
 git clone https://github.com/U-C4N/UMBOT.git
-cd elite-ai-chatbot
+cd UMBOT
 ```
 
 2. Create and activate a virtual Python environment:
@@ -35,12 +35,15 @@ source venv/bin/activate  # For Windows: venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-4. Set up your environment variables:
-   Create a `.env` file in the root directory and add your API keys:
+4. Set up your configuration:
+   Edit the `config.json` file in the root directory and add your API keys:
 
-```
-GEMINI_API_KEY=your_gemini_api_key_here
-GROQ_API_KEY=your_groq_api_key_here
+```json
+{
+  "gemini_api_key": "your_gemini_api_key_here",
+  "groq_api_key": "your_groq_api_key_here",
+  ...
+}
 ```
 
 5. Run the application:
@@ -49,16 +52,28 @@ GROQ_API_KEY=your_groq_api_key_here
 python app.py
 ```
 
-6. Open your browser and go to `http://127.0.0.1:5000/` to start using the application.
+6. Open your browser and go to `http://127.0.0.1:5000/` to start using UMBOT.
 
 ## Usage
 
 1. Select your preferred language from the dropdown menu.
-2. Choose an AI model from the available options.
+2. Choose an AI model from the available options (Gemini or Groq models).
 3. Type your message in the input field or upload an image for image-based queries.
 4. Adjust the temperature slider if desired to control the randomness of the AI's responses.
 5. Click the send button or press Enter to submit your query.
 6. View the AI's response in the chat window.
+
+## Supported Models
+
+### Gemini Models
+- gemini-1.5-pro
+- gemini-1.5-flash
+
+### Groq Models
+- gemma-7b-it
+- llama3-70b-8192
+- llama3-8b-8192
+- mixtral-8x7b-32768
 
 ## Acknowledgments
 
@@ -71,3 +86,7 @@ python app.py
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Author
+
+Created by [U-C4N](https://github.com/U-C4N)
