@@ -1,4 +1,4 @@
-# Elite AI Chatbot
+# UM CHATBOT
 
 Elite AI Chatbot is a web application that leverages the power of Gemini and Groq AI models to provide an advanced conversational experience. Built on the Python Flask framework, this application offers a user-friendly interface for interacting with various AI models.
 
@@ -18,7 +18,7 @@ Follow these steps to run the project on your local machine:
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/yourusername/elite-ai-chatbot.git
+git clone https://github.com/U-C4N/UMBOT.git
 cd elite-ai-chatbot
 ```
 
