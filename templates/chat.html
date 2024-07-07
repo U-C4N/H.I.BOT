@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>H.I.BOT</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/components/prism-python.min.js"></script>
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.24.1/themes/prism-tomorrow.min.css" rel="stylesheet" />
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+        }
+        .chat-container {
+            background-color: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+        }
+        .btn {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        .btn-blue {
+            background-color: #4a90e2;
+            color: white;
+        }
+        .btn-blue:hover {
+            background-color: #357ae8;
+        }
+        .btn-red {
+            background-color: #e74c3c;
+            color: white;
+        }
+        .btn-red:hover {
+            background-color: #c0392b;
+        }
+        .btn-green {
+            background-color: #2ecc71;
+            color: white;
+        }
+        .btn-green:hover {
+            background-color: #27ae60;
+        }
+        .toggle-bg {
+            background-color: #ccc;
+            width: 50px;
+            height: 24px;
+            border-radius: 12px;
+            position: relative;
+        }
+        .toggle-bg:before {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border-radius: 10px;
+            top: 2px;
+            left: 2px;
+            background-color: white;
+            transition: 0.3s;
+        }
+        input:checked + .toggle-bg {
+            background-color: #4a90e2;
+        }
+        input:checked + .toggle-bg:before {
+            transform: translateX(26px);
+        }
+        .copy-icon {
+            cursor: pointer;
+            float: right;
+        }
+        #progress-bar {
+            transition: width 0.5s ease-in-out;
+        }
+        .modal {
+            position: fixed;
+            inset: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-content {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .api-input {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #ccc;
+            border-radius: 0.25rem;
+            margin-bottom: 0.5rem;
+        }
+        .button-container {
+            position: absolute;
+            top: 0.5em;
+            right: 0.5em;
+            display: flex;
+        }
+        .copy-btn, .terminal-btn {
+            padding: 0.3em 0.6em;
+            background-color: #4a4a4a;
+            color: white;
+            border: none;
+            border-radius: 0.3em;
+            cursor: pointer;
+            font-size: 0.8em;
+            margin-left: 0.5em;
+        }
+        .copy-btn:hover, .terminal-btn:hover {
+            background-color: #5a5a5a;
+        }
+        .code-block {
+            position: relative;
+        }
+    </style>
+</head>
+<body class="flex flex-col h-screen bg-gray-100">
+    <header class="bg-blue-600 p-4 text-white shadow-lg flex justify-between items-center">
+        <h1 class="text-3xl font-bold">H.I.BOT</h1>
+        <button id="screenshot-btn" class="btn btn-blue">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+        </button>
+    </header>
+    
+    <main class="flex-grow overflow-auto p-4">
+        <div id="chat-messages" class="space-y-4 chat-container rounded-lg p-4"></div>
+    </main>
+    
+    <div id="progress-container" class="hidden bg-gray-200 rounded-full h-2.5 mb-4">
+        <div id="progress-bar" class="bg-blue-600 h-2.5 rounded-full" style="width: 0%"></div>
+    </div>
+    
+    <footer class="bg-white p-4 border-t shadow-lg">
+        <div class="flex space-x-2 mb-2">
+            <select id="model-select" class="bg-white border border-gray-300 text-gray-700 py-2 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <!-- Model options will be populated dynamically -->
+            </select>
+            <button id="settings-btn" class="btn btn-blue">Settings</button>
+            <button id="stats-btn" class="btn btn-green">Stats</button>
+            <button id="clear-btn" class="btn btn-red">Clear</button>
+            <label class="flex items-center cursor-pointer">
+                <div class="relative">
+                    <input type="checkbox" id="websearch-toggle" class="sr-only">
+                    <div class="toggle-bg"></div>
+                    <div class="dot"></div>
+                </div>
+                <div class="ml-3 text-gray-700 font-medium">
+                    Web Search
+                </div>
+            </label>
+        </div>
+        <div class="flex space-x-2">
+            <div class="relative flex-grow">
+                <input type="text" id="user-input" class="w-full bg-white border border-gray-300 text-gray-700 py-2 px-4 pr-8 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Type your message...">
+                <label for="file-upload" class="absolute right-2 top-2 cursor-pointer">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-400 hover:text-blue-500 transition" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
+                    </svg>
+                </label>
+                <input id="file-upload" type="file" class="hidden" accept="image/*">
+            </div>
+            <button id="send-btn" class="btn btn-blue">Send</button>
+        </div>
+    </footer>
+
+    <div id="settings-modal" class="modal hidden">
+        <div class="modal-content">
+            <h2 class="text-2xl mb-4 text-gray-800 font-bold">API Settings</h2>
+            <div class="space-y-2">
+                <label for="tavily-key" class="block text-sm font-medium text-gray-700">Tavily API Key</label>
+                <input type="text" id="tavily-key" placeholder="Tavily API Key" class="api-input">
+                
+                <label for="gemini-key" class="block text-sm font-medium text-gray-700">Gemini API Key</label>
+                <input type="text" id="gemini-key" placeholder="Gemini API Key" class="api-input">
+                
+                <label for="openai-key" class="block text-sm font-medium text-gray-700">OpenAI API Key</label>
+                <input type="text" id="openai-key" placeholder="OpenAI API Key" class="api-input">
+                
+                <label for="groq-key" class="block text-sm font-medium text-gray-700">Groq API Key</label>
+                <input type="text" id="groq-key" placeholder="Groq API Key" class="api-input">
+            </div>
+            <div class="mt-4 flex justify-end space-x-2">
+                <button id="save-settings" class="btn btn-green">Save</button>
+                <button id="close-settings" class="btn btn-red">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="stats-modal" class="modal hidden">
+        <div class="modal-content">
+            <h2 class="text-2xl mb-4 text-gray-800 font-bold">Statistics</h2>
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <canvas id="modelUsageChart"></canvas>
+                </div>
+                <div>
+                    <canvas id="timeSeriesChart"></canvas>
+                </div>
+                <div>
+                    <canvas id="responseTimeBoxPlot"></canvas>
+                </div>
+                <div>
+                    <canvas id="tokenUsageBoxPlot"></canvas>
+                </div>
+            </div>
+            <div class="mt-4 flex justify-end">
+                <button id="close-stats" class="btn btn-red">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
