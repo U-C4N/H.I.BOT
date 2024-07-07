@@ -1,6 +1,8 @@
 # H.I.BOT
 
 H.I.BOT is a web application that provides an interactive chat experience using various AI models (OpenAI, Gemini, Groq).
+![H.I.BOT in action](readme.gif)
+
 
 ## Features
 
